@@ -5,4 +5,4 @@ A developer-focused Wordpress plugin for integrating Elasticsearch.
 
 *Getting started
 
-See the [docs](wiki) for more details.
+See the [docs](https://github.com/KodrAus/eswp/wiki) for more details.
