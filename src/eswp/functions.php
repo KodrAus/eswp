@@ -78,7 +78,7 @@ add_action( "widgets_init", function() {
 function eswp_api_init() {
 	add_settings_section(
 		"eswp_section",
-		"Example settings section in general",
+		"ESWP",
 		"eswp_section_callback_function",
 		"general"
 	);
