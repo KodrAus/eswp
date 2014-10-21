@@ -123,6 +123,5 @@ function eswp_key_callback_function() {
 	}
 	
  	echo '<input name="eswp_api_key" id="gv_thumbnails_insert_into_excerpt" type="text" value="' . get_option( 'eswp_api_key' ) . '" class="code" /> Authorization key for ESWPs JSON API';
-	echo '<a href="#"></a>';
 }
 ?>
