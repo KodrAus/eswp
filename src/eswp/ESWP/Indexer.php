@@ -27,17 +27,38 @@ class Indexer {
 		$index = $client->getIndex($_doc->get_index());
 		$type = $index->getType($_doc::get_type());
 			
-		if (!$index->exists()) {
-			$index->create(array(), true);
-			$_doc->map($client, $index);
+		try
+		{
+			if (!$index->exists()) {
+				$index->create(array(), true);
+				$_doc->map($client, $index);
+			}
+				
+			$_doc->index($client, $index, $id, $doc);
 		}
-			
-		$_doc->index($client, $index, $id, $doc);
+		catch (\Elastica\Exception\Connection\HttpException $e)
+		{
+			echo 'ESWP: Error indexing: ',  $e->getMessage(), "\n";
+		}
 	}
 	
 	//Delete a generic document
 	public static function delete_doc($id, $doc) {
+		$client = self::get_client();
+	
+		$index = $client->getIndex($doc->get_index());
+		$type = $index->getType($doc::get_type());
 		
+		try
+		{
+			if ($index->exists()) {
+				$type->deleteDocument(new \Elastica\Document($id, array()));
+			}
+		}
+		catch (\Elastica\Exception\Connection\HttpException $e)
+		{
+			echo 'ESWP: Error deleting: ',  $e->getMessage(), "\n";
+		}
 	}
 	
 	//Index all documents
@@ -57,12 +78,19 @@ class Indexer {
 				$index = $client->getIndex($_doc->get_index());
 				$type = $index->getType($_doc::get_type());
 					
-				if (!$index->exists()) {
-					$index->create(array(), true);
-					$_doc->map($client, $index);
+				try
+				{
+					if (!$index->exists()) {
+						$index->create(array(), true);
+						$_doc->map($client, $index);
+					}
+	
+					$_doc->index($client, $index, $doc["id"], $doc["doc"]);
 				}
-
-				$_doc->index($client, $index, $doc["id"], $doc["doc"]);
+				catch (\Elastica\Exception\Connection\HttpException $e)
+				{
+					echo 'ESWP: Error indexing: ',  $e->getMessage(), "\n";
+				}
 			}
 		}
 	}
@@ -72,11 +100,18 @@ class Indexer {
 		$client = self::get_client();
 		
 		//If the type to search on is set, then use it. Otherwise use BaseType default search
-		if (isset($ontype)) {
-			return $ontype::query($client, $query);
+		try
+		{
+			if (isset($ontype)) {
+				return $ontype::query($client, $query);
+			}
+			else {
+				return \ESWP\MyTypes\BaseType::query($client, $query);
+			}
 		}
-		else {
-			return \ESWP\MyTypes\BaseType::query($client, $query);
+		catch (\Elastica\Exception\Connection\HttpException $e)
+		{
+			echo 'ESWP: Error searching: ',  $e->getMessage(), "\n";
 		}
 	}
 	

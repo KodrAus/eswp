@@ -19,15 +19,7 @@ function index_post($post_ID) {
 
 //Delete a Wordpress post
 function delete_post($post_ID) {
-	$_doc = new \ESWP\MyTypes\Posts();
-	$client = \ESWP\Indexer::get_client();
-	
-	$index = $client->getIndex($_doc->get_index());
-	$type = $index->getType($_doc::get_type());
-		
-	if ($index->exists()) {
-		$type->deleteDocument(new \Elastica\Document($post_ID, array()));
-	}
+	\ESWP\Indexer::delete_doc($post_ID, new \ESWP\MyTypes\Posts());	
 }
 
 //Index a Wordpress comment
@@ -38,15 +30,7 @@ function index_comment($comment_ID, $comment_approved) {
 
 //Delete a Wordpress comment
 function deleted_comment(int $comment_ID) {
-	$_doc = new \ESWP\MyTypes\Comments();
-	$client = \ESWP\Indexer::get_client();
-	
-	$index = $client->getIndex(\ESWP\MyTypes\BaseType::index);
-	$type = $index->getType($_doc::get_type());
-		
-	if ($index->exists()) {
-		$type->deleteDocument(new \Elastica\Document($comment_ID, array()));
-	}
+	\ESWP\Indexer::delete_doc($comment_ID, new \ESWP\MyTypes\Comments());
 }
 
 //Get all Wordpress posts
