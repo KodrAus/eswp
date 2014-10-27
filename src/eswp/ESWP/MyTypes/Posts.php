@@ -8,18 +8,13 @@
 namespace ESWP\MyTypes;
 
 class Posts extends BaseType {
-	public static function order() {
-		return 10;
-	}
-	
 	public function document_is_this_type($doc) {
 		return
 			$doc === "posts" ||
 			get_class($doc) === "WP_Post";
 	}
 	
-	public function map($client, $index) {
-		$type = $index->getType(self::get_type());
+	public function map($client, $index, $type) {
 		$type->setMapping(array(
 			"modified" => array (
 				"type" => "date"
@@ -27,7 +22,7 @@ class Posts extends BaseType {
 		));
 	}
 	
-	public function index($client, $index, $id, $doc) {
+	public function index($client, $index, $type, $id, $doc) {
 		//Get the categories
 		$categories = get_the_terms($doc, "category");
 		$_categories = array();
@@ -42,7 +37,6 @@ class Posts extends BaseType {
 		$author = get_user_by("id", $doc->post_author);
 
 		//Index the document
-		$type = $index->getType(self::get_type());
 		$type->addDocument(new \Elastica\Document($id, 
 			array(
 				"title" => $doc->post_title,
@@ -58,13 +52,15 @@ class Posts extends BaseType {
 	
 	public function get_thumbnail($doc) {
 		?>
-		<h3><a href="<?php echo get_permalink($doc["id"]) ?>"><?php echo $doc["title"] ?></a></h3>
-		<p><em>by <?php echo $doc["author"] ?><?php $this->thumbnail_get_categories($doc) ?></em></p>
-		<p><?php if (isset($doc["excerpt"])) { echo $doc["excerpt"]; } ?></p>
+		<div class="search-result">
+			<h3><a href="<?php echo get_permalink($doc["id"]) ?>"><?php echo $doc["title"] ?></a></h3>
+			<p><em>by <?php echo $doc["author"] ?><?php $this->thumbnail_get_categories($doc) ?></em></p>
+			<p><?php if (isset($doc["excerpt"])) { echo $doc["excerpt"]; } ?></p>
+		</div>
 		<?php
 	}
 	
-	function thumbnail_get_categories($doc) {
+	public function thumbnail_get_categories($doc) {
 		if (isset($doc["categories"])) {
 			echo " in ";
 			

@@ -7,15 +7,14 @@
  
 namespace ESWP\MyTypes;
 
-class Comments extends BaseType {	
+class Comments extends BaseType {
 	public function document_is_this_type($doc) {
 		return
 			$doc === "comments" ||
 			isset($doc->comment_ID);
 	}
 	
-	public function map($client, $index) {
-		$type = $index->getType(self::get_type());
+	public function map($client, $index, $type) {
 		$type->setMapping(array(
 			"modified" => array (
 				"type" => "date"
@@ -23,8 +22,7 @@ class Comments extends BaseType {
 		));
 	}
 	
-	public function index($client, $index, $id, $doc) {
-		$type = $index->getType(self::get_type());
+	public function index($client, $index, $type, $id, $doc) {
 		$type->addDocument(new \Elastica\Document($id, 
 			array(
 				"author" => $doc->comment_author,

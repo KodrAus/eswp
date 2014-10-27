@@ -25,9 +25,8 @@ class SearchWidget extends \WP_Widget {
 			?>
 			<form role="search" method="post" class="search-form" action="<?php echo $page ?>">
 				<label>
-					<span class="screen-reader-text">Search for:</span>
 					<input type="hidden" value="Posts" name="t">
-					<input type="search" class="search-field" placeholder="Search me baby" value="" name="q" title="Search">
+					<input type="text" class="search-field" placeholder="search" value="" name="q" title="Search">
 				</label>
 				<input type="submit" class="search-submit" value="Search">
 			</form>

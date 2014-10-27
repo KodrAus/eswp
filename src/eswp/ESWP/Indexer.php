@@ -24,17 +24,17 @@ class Indexer {
 
 		$client = self::get_client();
 
-		$index = $client->getIndex($_doc->get_index());
-		$type = $index->getType($_doc::get_type());
-			
+		$index = $client->getIndex(self::get_index());
+		$type = $index->getType($_doc->get_type());
+
 		try
 		{
 			if (!$index->exists()) {
 				$index->create(array(), true);
-				$_doc->map($client, $index);
+				$_doc->map($client, $index, $type);
 			}
 				
-			$_doc->index($client, $index, $id, $doc);
+			$_doc->index($client, $index, $type, $id, $doc);
 		}
 		catch (\Elastica\Exception\Connection\HttpException $e)
 		{
@@ -46,8 +46,8 @@ class Indexer {
 	public static function delete_doc($id, $doc) {
 		$client = self::get_client();
 	
-		$index = $client->getIndex($doc->get_index());
-		$type = $index->getType($doc::get_type());
+		$index = $client->getIndex(self::get_index());
+		$type = $index->getType($doc->get_type());
 		
 		try
 		{
@@ -75,8 +75,8 @@ class Indexer {
 				
 				$client = self::get_client();
 
-				$index = $client->getIndex($_doc->get_index());
-				$type = $index->getType($_doc::get_type());
+				$index = $client->getIndex(self::get_index());
+				$type = $index->getType($_doc->get_type());
 					
 				try
 				{
@@ -98,7 +98,7 @@ class Indexer {
 	//Standard search
 	public static function search_docs($query, $ontype) {
 		$client = self::get_client();
-		
+
 		//If the type to search on is set, then use it. Otherwise use BaseType default search
 		try
 		{
@@ -113,6 +113,17 @@ class Indexer {
 		{
 			echo 'ESWP: Error searching: ',  $e->getMessage(), "\n";
 		}
+	}
+	
+	//Get the index
+	public static function get_index() {
+		$index = get_option("eswp_index");
+		
+		if (!isset($index)) {
+			$index = "wordpress";
+		}
+		
+		return $index;
 	}
 	
 	//Get a specific document type in MyTypes
@@ -155,8 +166,9 @@ class Indexer {
 			
 			foreach ($extra_types as $type) {
 				$order = $size;
-				if (method_exists($type, "order")) {
-					$order = $type::order();
+				
+				if (method_exists($type, "get_order")) {
+					$order = $type->get_order();
 				}
 
 				array_push($_types, array(
@@ -171,15 +183,17 @@ class Indexer {
 			if ($type !== "BaseType.php" && trim($type, ".") !== "") {
 				$order = $size + 10;
 				$_type = "\\ESWP\\MyTypes\\". explode(".", $type)[0];
-	
+				
 				if (class_exists($_type)) {
-					if (method_exists($_type, "order")) {
-						$order = $_type::order();
+					$_type_obj = new $_type();
+					
+					if (method_exists($_type, "get_order")) {
+						$order = $_type_obj->get_order();
 					}
 			
 					array_push($_types, array(
 						"order" => $order,
-						"type" => new $_type()
+						"type" => $_type_obj
 					));
 				}
 			}

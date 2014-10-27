@@ -7,26 +7,42 @@
  
 namespace ESWP\MyTypes;
 
-abstract class BaseType {
-	public static function _get_index() {
-		return "wordpress";
+abstract class BaseType {	
+	public function get_order() {
+		$class = get_called_class();
+		$parent = get_parent_class($class);
+		
+		if (isset($parent) && $parent === "ESWP\MyTypes\BaseType")
+		{
+			return 50;
+		}
+		else
+		{
+			return 10;
+		}
 	}
 	
-	public function get_index() {
-		return self::_get_index();
-	}
-	
-	public static function get_type() {
-		return strtolower(end(explode("\\", get_called_class())));
+	public function get_type() {
+		//Return the class name by default
+		//Or the name of the base class if it isn't BaseType
+		$class = get_called_class();
+		$parent = get_parent_class($class);
+		
+		if (isset($parent) && $parent !== "ESWP\MyTypes\BaseType")
+		{
+			$class = $parent;
+		}
+
+		return strtolower(end(explode("\\", $class)));
 	}
 	
 	abstract public function get_thumbnail($doc);
 
 	abstract public function document_is_this_type($doc);
 	
-	abstract public function index($client, $index, $post_ID, $_post);
+	abstract public function index($client, $index, $type, $id, $doc);
 	
-	public function map($client, $index) {
+	public function map($client, $index, $type) {
 		//By default let Elasticsearch handle mapping at index time
 	}
 	
@@ -34,6 +50,8 @@ abstract class BaseType {
 		//By default we execute a simple query_string search on all types in the index
 		$q = array(
 			"highlight" => array(
+				"pre_tags" => array('<span class="highlight">'),
+        		"post_tags" => array("</span>"),
 				"fields" => array (
 					"content" => array(
 						"force_source" => true
@@ -47,7 +65,7 @@ abstract class BaseType {
 		    )
 		);
 		
-		$index = $client->getIndex(self::_get_index());
+		$index = $client->getIndex(\ESWP\Indexer::get_index());
 
 		if ($index->exists()) {
 			$path = $index->getName() . "/_search";

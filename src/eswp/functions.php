@@ -89,6 +89,15 @@ function eswp_options_init() {
 		"eswp_section"
 	);
 	
+	//Index name
+ 	add_settings_field(
+		"eswp_index",
+		"Elasticsearch Index",
+		"eswp_index_callback_function",
+		"general",
+		"eswp_section"
+	);
+	
 	//Auth key for the JSON API
 	add_settings_field(
 		"eswp_api_key",
@@ -98,8 +107,9 @@ function eswp_options_init() {
 		"eswp_section"
 	);
 
- 	register_setting( "general", "eswp_server" );
-	register_setting( "general", "eswp_api_key");
+ 	register_setting("general", "eswp_server");
+	register_setting("general", "eswp_index");
+	register_setting("general", "eswp_api_key");
  }
  
 add_action( "admin_init", "eswp_options_init" );
@@ -114,6 +124,14 @@ function eswp_server_callback_function() {
     	update_option( "eswp_server", "http://localhost:9200" );
 	}
  	echo '<input name="eswp_server" id="gv_thumbnails_insert_into_excerpt" type="url" value="' . get_option( 'eswp_server' ) . '" class="code" /> Fully qualified URL of your Elasticsearch server: {protocol}://{user}:{pass}@{host}:{port}/{path}';
+}
+
+function eswp_index_callback_function() {
+	//Initialise API key with a default value
+	if ( get_option( "eswp_index" ) === false ) {
+    	update_option( "eswp_server", \ESWP\Indexer::get_index() );
+	}
+ 	echo '<input name="eswp_index" id="gv_thumbnails_insert_into_excerpt" type="text" value="' . get_option( 'eswp_index' ) . '" class="code" /> The name of the index to use for Wordpress';
 }
 
 function eswp_key_callback_function() {
