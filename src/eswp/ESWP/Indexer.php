@@ -8,16 +8,6 @@
 namespace ESWP;
 
 class Indexer {
-	//Get an instance of the Elastica client
-	//We should build this through some easy to edit configuration
-	//Just use a basic url param. So we can support https, basic auth and custom paths
-	public static function get_client() {
-		$url = get_option("eswp_server");
-		return new \Elastica\Client(array(
-		    "url" => $url
-		));
-	}
-	
 	//Index a generic document. Call this method from your custom hooks
 	public static function index_doc($id, $doc) {
 		$_doc = self::get_first_type_match_for_doc($doc);
@@ -113,6 +103,16 @@ class Indexer {
 		{
 			echo 'ESWP: Error searching: ',  $e->getMessage(), "\n";
 		}
+	}
+	
+	//Get an instance of the Elastica client
+	//We should build this through some easy to edit configuration
+	//Just use a basic url param. So we can support https, basic auth and custom paths
+	public static function get_client() {
+		$url = get_option("eswp_server");
+		return new \Elastica\Client(array(
+		    "url" => $url
+		));
 	}
 	
 	//Get the index
