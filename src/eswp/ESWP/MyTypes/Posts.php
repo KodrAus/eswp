@@ -18,6 +18,11 @@ class Posts extends BaseType {
 		$type->setMapping(array(
 			"modified" => array (
 				"type" => "date"
+			),
+			"content" => array (
+				"type" => "string",
+				"index_options" => "offsets",
+				"analyzer" => "english"
 			)
 		));
 	}
@@ -35,13 +40,44 @@ class Posts extends BaseType {
 
 		//Get the author
 		$author = get_user_by("id", $doc->post_author);
+		
+		//Excerpt
+		$excerpt = "";
+		if (!isset($doc->post_excerpt) || strlen($doc->post_excerpt) === 0) {
+			$excerpt_length = 35;
+			$excerpt = $doc->post_content;
+		    $excerpt = strip_tags(strip_shortcodes($excerpt));
+		    $words = explode(' ', $excerpt, $excerpt_length + 1);
+			
+		    if (count($words) > $excerpt_length) {
+		        array_pop($words);
+		        array_push($words);
+				
+		        $excerpt = implode(' ', $words);
+	
+				$last_char = substr($excerpt, -1);
+				
+				if ($last_char !== "!" && $last_char !== "." && $last_char !== "?") {
+					$excerpt = $excerpt . "...";
+				}
+			}
+			
+			$doc->post_excerpt = $excerpt;
+		}
+		else {
+			$excerpt = $doc->post_excerpt;
+		}
+		
+		//Content length
+		$content_length = strlen($doc->post_content);
 
 		//Index the document
 		$type->addDocument(new \Elastica\Document($id, 
 			array(
 				"title" => $doc->post_title,
 				"content" => $doc->post_content,
-				"excerpt" => $doc->post_excerpt,
+				"content_length" => $content_length,
+				"excerpt" => $excerpt,
 				"categories" => $_categories,
 				"author" => $author->user_nicename,
 				"slug" => $doc->guid,
@@ -55,7 +91,7 @@ class Posts extends BaseType {
 		<div class="search-result">
 			<h3><a href="<?php echo get_permalink($doc["id"]) ?>"><?php echo $doc["title"] ?></a></h3>
 			<p><em>by <?php echo $doc["author"] ?><?php $this->thumbnail_get_categories($doc) ?></em></p>
-			<p><?php if (isset($doc["excerpt"])) { echo $doc["excerpt"]; } ?></p>
+			<?php if (isset($doc["excerpt"])) { echo $doc["excerpt"]; } ?>
 		</div>
 		<?php
 	}

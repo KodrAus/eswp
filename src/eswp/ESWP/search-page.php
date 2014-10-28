@@ -27,14 +27,10 @@ foreach($output["hits"]["hits"] as $hit) {
 		$preview = "";
 		foreach ($hit["highlight"] as $highlights) {
 			foreach ($highlights as $highlight) {
-				$preview = $preview . $highlight;
+				$preview = $preview . "<p class='search-excerpt'>" . $highlight . "</p>";
 			}
 		}
-				
-		if (preg_match("[a-zA-Z0-9]$", $preview)) {
-			$preview = $preview . "...";
-		}
-				
+	
 		$source["excerpt"] = $preview;
 	}
 	//Otherwise, if an excerpt hasn't been set manually
@@ -50,12 +46,14 @@ foreach($output["hits"]["hits"] as $hit) {
 			
 	        $preview = implode(' ', $words);
 
-			if (preg_match("[a-zA-Z0-9]$", $preview)) {
+			$last_char = substr($preview, -1);
+			
+			if ($last_char !== "!" && $last_char !== "." && $last_char !== "?") {
 				$preview = $preview . "...";
 			}
 		}
 		
-	    $source["excerpt"] = $preview;
+	    $source["excerpt"] = "<p class='search-excerpt'>" . $preview . "</p>";
 	}
 	
 	//Get the first type match and execute the get_thumbnail method
