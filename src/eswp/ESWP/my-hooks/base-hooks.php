@@ -1,6 +1,6 @@
 <?php
 /**
- * basehooks script file
+ * base-hooks script file
  * Contains default hooks for indexing/deleting Wordpress posts and comments
  */
  
@@ -14,23 +14,23 @@ add_filter("es_get_all_docs", "get_all_posts");
 //Index a Wordpress post
 function index_post($post_ID) {
 	$post = get_post($post_ID);
-	\ESWP\Indexer::index_doc($post_ID, $post);
+	\ESWP\Client::index_doc($post_ID, $post);
 }
 
 //Delete a Wordpress post
 function delete_post($post_ID) {
-	\ESWP\Indexer::delete_doc($post_ID, new \ESWP\MyTypes\Posts());	
+	\ESWP\Client::delete_doc($post_ID, new \ESWP\MyTypes\Posts());	
 }
 
 //Index a Wordpress comment
 function index_comment($comment_ID, $comment_approved) {
 	$comment = get_comment($comment_ID);
-	\ESWP\Indexer::index_doc($comment_ID, $comment);
+	\ESWP\Client::index_doc($comment_ID, $comment);
 }
 
 //Delete a Wordpress comment
 function deleted_comment(int $comment_ID) {
-	\ESWP\Indexer::delete_doc($comment_ID, new \ESWP\MyTypes\Comments());
+	\ESWP\Client::delete_doc($comment_ID, new \ESWP\MyTypes\Comments());
 }
 
 //Get all Wordpress posts

@@ -11,10 +11,11 @@ switch ($action) {
 	//Execute a search
 	case "search":
 		$query = isset($_REQUEST["q"]) ? $_REQUEST["q"] : "";
-		$ontype = isset($_REQUEST["t"]) ? "\\ESWP\\MyTypes\\" . $_REQUEST["t"] : "\\ESWP\\MyTypes\\BaseType";
+		$on_type = isset($_REQUEST["t"]) ? "\\ESWP\\MyTypes\\" . $_REQUEST["t"] : "\\ESWP\\MyTypes\\BaseType";
+		$query_type = isset($_REQUEST["qt"]) ? "get_" . $_REQUEST["qt"] : "get_query";
 		
 		$output = null;
-		$output = \ESWP\Indexer::search_docs($query, $ontype);
+		$output = \ESWP\Client::search_docs($query, $on_type, $query_type);
 	break;
 	//Execute a reindex
 	case "reindex":
@@ -22,7 +23,7 @@ switch ($action) {
 		$keyToMatch = get_option("eswp_api_key");
 		
 		if ($keyToMatch !== false && strlen($keyToMatch) > 1 && $key === $keyToMatch) {
-			\ESWP\Indexer::index_all();
+			\ESWP\Client::index_all();
 			$output = "Ok";
 		}
 		else {

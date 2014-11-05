@@ -14,15 +14,20 @@ class Posts extends BaseType {
 			get_class($doc) === "WP_Post";
 	}
 	
+	//The default Post mapping adds a modified datestamp, content length and autocomplete field
 	public function map($client, $index, $type) {
 		$type->setMapping(array(
-			"modified" => array (
+			"modified" => array(
 				"type" => "date"
 			),
-			"content" => array (
+			"content" => array(
 				"type" => "string",
 				"index_options" => "offsets",
 				"analyzer" => "english"
+			),
+			"title_autocomplete" => array(
+				"type" => "string",
+				"analyzer" => "autocomplete_text"	
 			)
 		));
 	}
@@ -75,6 +80,7 @@ class Posts extends BaseType {
 		$type->addDocument(new \Elastica\Document($id, 
 			array(
 				"title" => $doc->post_title,
+				"title_autocomplete" => $doc->post_title,
 				"content" => $doc->post_content,
 				"content_length" => $content_length,
 				"excerpt" => $excerpt,

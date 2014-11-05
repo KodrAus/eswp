@@ -46,8 +46,8 @@ abstract class BaseType {
 		//By default let Elasticsearch handle mapping at index time
 	}
 	
-	public function query($client, $query) {
-		$q = array(
+	public function get_query($q) {
+		$query = array(
 			//By default we don't return the content field in _source for efficiency
 			//Instead where no highlights are available we rely on the excerpt
 			"_source" => array(
@@ -75,13 +75,13 @@ abstract class BaseType {
 						"bool" => array(
 							"must" => array(
 								"query_string" => array(
-									"query" => $query
+									"query" => $q
 								)
 							),
 							"should" => array(
 						        "match" => array(
 						            "content" => array(
-										"query" => $query,
+										"query" => $q,
 										"type" => "phrase",
 										"boost" => 2,
 										"slop" => 0.3,
@@ -137,18 +137,11 @@ abstract class BaseType {
 		    )
 		);
 		
-		$index = $client->getIndex(\ESWP\Indexer::get_index());
-
-		if ($index->exists()) {
-			$path = $index->getName() . "/_search";
+		return $query;
+	}
 	
-			$response = $client->request($path, \Elastica\Request::POST, $q);
-			$response_array = $response->getData();
-
-			return $response_array;
-		}
-		
-		return null;
+	public function get_autocomplete($q) {
+		//TODO: Add default search for autocomplete
 	}
 }
 ?>

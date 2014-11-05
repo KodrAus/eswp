@@ -1,13 +1,21 @@
 <?php
 /**
- * Indexer class file
+ * Client class file
  * Static service class acts as a mediator between Elasticsearch and Wordpress
  * Implementation provided by Elastica
  */
  
 namespace ESWP;
 
-class Indexer {
+class Client {
+	//Get an instance of the Elastica client
+	public static function get_client() {
+		$url = get_option("eswp_server");
+		return new \Elastica\Client(array(
+		    "url" => $url
+		));
+	}
+	
 	//Index a generic document. Call this method from your custom hooks
 	public static function index_doc($id, $doc) {
 		$_doc = self::get_first_type_match_for_doc($doc);
@@ -19,11 +27,9 @@ class Indexer {
 
 		try
 		{
-			if (!$index->exists()) {
-				$index->create(array(), true);
-				$_doc->map($client, $index, $type);
-			}
-				
+			\ESWP\Index::map($client, $index);
+			
+			$_doc->map($client, $index, $type);
 			$_doc->index($client, $index, $type, $id, $doc);
 		}
 		catch (\Elastica\Exception\Connection\HttpException $e)
@@ -70,11 +76,9 @@ class Indexer {
 					
 				try
 				{
-					if (!$index->exists()) {
-						$index->create(array(), true);
-						$_doc->map($client, $index);
-					}
-	
+					\ESWP\Index::map($client, $index);
+					
+					$_doc->map($client, $index, $type);
 					$_doc->index($client, $index, $doc["id"], $doc["doc"]);
 				}
 				catch (\Elastica\Exception\Connection\HttpException $e)
@@ -86,17 +90,17 @@ class Indexer {
 	}
 	
 	//Standard search
-	public static function search_docs($query, $ontype) {
+	public static function search_docs($q, $on_type, $query_type = "get_query") {
 		$client = self::get_client();
 
 		//If the type to search on is set, then use it. Otherwise use BaseType default search
 		try
 		{
-			if (isset($ontype)) {
-				return $ontype::query($client, $query);
+			if (isset($on_type)) {
+				return self::execute_query($client, forward_static_call_array(array($on_type, $query_type), array($q)));
 			}
 			else {
-				return \ESWP\MyTypes\BaseType::query($client, $query);
+				return self::execute_query($client, forward_static_call_array(array(\ESWP\MyTypes\BaseType, $query_type), array($q)));
 			}
 		}
 		catch (\Elastica\Exception\Connection\HttpException $e)
@@ -105,14 +109,19 @@ class Indexer {
 		}
 	}
 	
-	//Get an instance of the Elastica client
-	//We should build this through some easy to edit configuration
-	//Just use a basic url param. So we can support https, basic auth and custom paths
-	public static function get_client() {
-		$url = get_option("eswp_server");
-		return new \Elastica\Client(array(
-		    "url" => $url
-		));
+	private static function execute_query($client, $query) {
+		$index = $client->getIndex(self::get_index());
+
+		if ($index->exists()) {
+			$path = $index->getName() . "/_search";
+	
+			$response = $client->request($path, \Elastica\Request::POST, $query);
+			$response_array = $response->getData();
+
+			return $response_array;
+		}
+		
+		return null;
 	}
 	
 	//Get the index

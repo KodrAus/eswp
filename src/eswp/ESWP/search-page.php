@@ -10,7 +10,7 @@ $query = isset($_REQUEST["q"]) ? $_REQUEST["q"] : "";
 $ontype = isset($_REQUEST["t"]) ? "\\ESWP\\MyTypes\\" . $_REQUEST["t"] : "\\ESWP\\MyTypes\\BaseType";
 
 //Execute the search query
-$output = \ESWP\Indexer::search_docs($query, $ontype);
+$output = \ESWP\Client::search_docs($query, $ontype);
 
 //Filter over each result and get the associated type
 ?>
@@ -57,7 +57,7 @@ foreach($output["hits"]["hits"] as $hit) {
 	}
 	
 	//Get the first type match and execute the get_thumbnail method
-	$_type = \ESWP\Indexer::get_first_type_match_for_doc($type);
+	$_type = \ESWP\Client::get_first_type_match_for_doc($type);
 	if (isset($_type)) {
 		echo $_type->get_thumbnail($source);
 	}

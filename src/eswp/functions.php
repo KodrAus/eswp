@@ -12,7 +12,7 @@ add_action("init", "loader");
 
 function loader() {
 	include_once("ESWP/MyTypes/BaseType.php");
-	include_once("ESWP/my-hooks/basehooks.php");
+	include_once("ESWP/my-hooks/base-hooks.php");
 	
     spl_autoload_register("__autoload_elastica");
 	spl_autoload_register("__autoload_eswp");
@@ -26,7 +26,7 @@ function loader() {
 	}
 	
 	//Index all items
-	//ESWP\Indexer::index_all();
+	//ESWP\Client::index_all();
 }
 
 function __autoload_elastica ($class) {
@@ -129,7 +129,7 @@ function eswp_server_callback_function() {
 function eswp_index_callback_function() {
 	//Initialise API key with a default value
 	if ( get_option( "eswp_index" ) === false ) {
-    	update_option( "eswp_server", \ESWP\Indexer::get_index() );
+    	update_option( "eswp_server", \ESWP\Client::get_index() );
 	}
  	echo '<input name="eswp_index" id="gv_thumbnails_insert_into_excerpt" type="text" value="' . get_option( 'eswp_index' ) . '" class="code" /> The name of the index to use for Wordpress';
 }
