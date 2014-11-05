@@ -13,9 +13,9 @@ Point ESWP to your Elasticsearch server
 
 Add the ESWP Search Widget to your theme. Add the Search Results and API pages to start pointing your searches at Elasticsearch.
 
-[How to change thumbnail markup](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#changing-post-thumbnail)
+[How to change thumbnail markup](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#changing-posts-thumbnail)
 
-[How to change type mapping](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#changing-post-mapping)
+[How to change type mapping](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#changing-posts-mapping)
 
 [How to add index analyzers and tokenizers](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#adding-index-analyzers-and-tokenizers)
 
