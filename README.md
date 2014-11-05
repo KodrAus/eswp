@@ -17,4 +17,6 @@ Add the ESWP Search Widget to your theme. Add the Search Results and API pages t
 
 [How to change type mapping](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#changing-post-mapping)
 
+[How to add index analyzers and tokenizers](https://github.com/KodrAus/eswp/wiki/Overriding-Default-Functionality#adding-index-analyzers-and-tokenizers)
+
 Or see the [Getting Started Guide](https://github.com/KodrAus/eswp/wiki/getting-started) for a thorough guide.
