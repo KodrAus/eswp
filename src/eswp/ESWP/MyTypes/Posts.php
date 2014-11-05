@@ -15,7 +15,7 @@ class Posts extends BaseType {
 	}
 	
 	//The default Post mapping adds a modified datestamp, content length and autocomplete field
-	public function map($client, $index, $type) {
+	public function map($type) {
 		$type->setMapping(array(
 			"modified" => array(
 				"type" => "date"
@@ -32,7 +32,7 @@ class Posts extends BaseType {
 		));
 	}
 	
-	public function index($client, $index, $type, $id, $doc) {
+	public function index($type, $id, $doc) {
 		//Get the categories
 		$categories = get_the_terms($doc, "category");
 		$_categories = array();
