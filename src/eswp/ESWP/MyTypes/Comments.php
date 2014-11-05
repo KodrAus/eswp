@@ -8,10 +8,11 @@
 namespace ESWP\MyTypes;
 
 class Comments extends BaseType {
-	public function document_is_this_type($doc) {
-		return
-			$doc === "comments" ||
-			isset($doc->comment_ID);
+	public function wp_document_is_this_type($doc) {
+		return isset($doc->comment_ID);
+	}	
+	public function es_document_is_this_type($doc) {
+		return $doc === "comments";
 	}
 	
 	public function map($type) {

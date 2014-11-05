@@ -57,7 +57,7 @@ foreach($output["hits"]["hits"] as $hit) {
 	}
 	
 	//Get the first type match and execute the get_thumbnail method
-	$_type = \ESWP\Client::get_first_type_match_for_doc($type);
+	$_type = \ESWP\Client::get_first_type_match_for_doc($type, "es");
 	if (isset($_type)) {
 		echo $_type->get_thumbnail($source);
 	}

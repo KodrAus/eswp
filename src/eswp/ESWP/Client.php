@@ -142,17 +142,18 @@ class Client {
 	}
 	
 	//Get the first document type in MyTypes that can index a document (ordered by optional order() method)
-	public static function get_first_type_match_for_doc($doc) {
+	public static function get_first_type_match_for_doc($doc, $doc_type = "wp") {
 		$types = self::get_all_types();
-		return self::_get_first_type_match_for_doc($doc, $types);
+		return self::_get_first_type_match_for_doc($doc, $types, $doc_type);
 	}
 	
 	//Private method to pass previously found types in to match for recursive functions
-	static function _get_first_type_match_for_doc($doc, $types) {
+	static function _get_first_type_match_for_doc($doc, $types, $doc_type = "wp") {
+		$check = $doc_type . "_document_is_this_type";
 		$sorted_types = self::array_sort($types, "order");
 
 		foreach ($sorted_types as $type) {
-			if ($type["type"]->document_is_this_type($doc)) {
+			if ($type["type"]->$check($doc)) {
 				return $type["type"];
 			}
 		}

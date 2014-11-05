@@ -8,10 +8,11 @@
 namespace ESWP\MyTypes;
 
 class Posts extends BaseType {
-	public function document_is_this_type($doc) {
-		return
-			$doc === "posts" ||
-			get_class($doc) === "WP_Post";
+	public function wp_document_is_this_type($doc) {
+		return get_class($doc) === "WP_Post";
+	}
+	public function es_document_is_this_type($doc) {
+		return $doc === "posts";
 	}
 	
 	//The default Post mapping adds a modified datestamp, content length and autocomplete field

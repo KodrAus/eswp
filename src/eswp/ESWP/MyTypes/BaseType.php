@@ -38,7 +38,8 @@ abstract class BaseType {
 	
 	abstract public function get_thumbnail($doc);
 
-	abstract public function document_is_this_type($doc);
+	abstract public function wp_document_is_this_type($doc);
+	abstract public function es_document_is_this_type($doc);
 	
 	abstract public function index($type, $id, $doc);
 	
