@@ -36,7 +36,8 @@ abstract class BaseType {
 		return strtolower(end(explode("\\", $class)));
 	}
 	
-	abstract public function get_thumbnail($doc);
+	abstract public function get_search_thumbnail($doc);
+	abstract public function get_autocomplete_thumbnail($doc);
 
 	abstract public function wp_document_is_this_type($doc);
 	abstract public function es_document_is_this_type($doc);
@@ -47,7 +48,7 @@ abstract class BaseType {
 		//By default let Elasticsearch handle mapping at index time
 	}
 	
-	public function get_query($q) {
+	public function search_query($q) {
 		$query = array(
 			//By default we don't return the content field in _source for efficiency
 			//Instead where no highlights are available we rely on the excerpt
@@ -141,8 +142,31 @@ abstract class BaseType {
 		return $query;
 	}
 	
-	public function get_autocomplete($q) {
-		//TODO: Add default search for autocomplete
+	public function autocomplete_query($q) {
+		$query = array(
+			"_source" => array(
+				"exclude" => array(
+					"content"
+				)
+			),
+			"highlight" => array(
+				"pre_tags" => array('<span class="highlight">'),
+        		"post_tags" => array("</span>"),
+				"fields" => array (
+					"content" => array(
+						"force_source" => true,
+						"type" => "postings"
+					)
+				)
+			),
+			"query" => array(
+				"query_string" => array(
+					"query" => $q
+				)
+			)
+		);
+		
+		return $query;
 	}
 }
 ?>

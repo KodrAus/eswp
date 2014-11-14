@@ -8,6 +8,11 @@
  */
 
 //Loader
+add_action( 'wp_enqueue_script', 'load_jquery' );
+function load_jquery() {
+    wp_enqueue_script( 'jquery' );
+}
+
 add_action("init", "loader");
 
 function loader() {
@@ -24,9 +29,6 @@ function loader() {
 	foreach ($hooks as $hook) {
 		include(str_replace("/", "\\", plugin_dir_path( __FILE__ ) . "\\ESWP\\my-hooks\\" . $hook));
 	}
-	
-	//Index all items
-	//ESWP\Client::index_all();
 }
 
 function __autoload_elastica ($class) {
@@ -54,11 +56,11 @@ function __autoload_eswp($class) {
 
 //Shortcodes
 //[eswp-search]
-function eswpsearch_func($atts) {
+function eswpearch_func($atts) {
 	//Execute the search from the _REQUEST object
 	include(str_replace("/", "\\", plugin_dir_path( __FILE__ ) . "\\ESWP\\search-page.php"));
 }
-add_shortcode("eswp-search", "eswpsearch_func");
+add_shortcode("eswp-search", "eswpearch_func");
 
 //Inject the Search API template into the Wordpress cache
 include_once(str_replace("/", "\\", plugin_dir_path( __FILE__ ) . "\\ESWP\\SearchAPILoader.php"));

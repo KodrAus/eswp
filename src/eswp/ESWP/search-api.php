@@ -12,10 +12,22 @@ switch ($action) {
 	case "search":
 		$query = isset($_REQUEST["q"]) ? $_REQUEST["q"] : "";
 		$on_type = isset($_REQUEST["t"]) ? "\\ESWP\\MyTypes\\" . $_REQUEST["t"] : "\\ESWP\\MyTypes\\BaseType";
-		$query_type = isset($_REQUEST["qt"]) ? "get_" . $_REQUEST["qt"] : "get_query";
+		$query_type = isset($_REQUEST["qt"]) ? $_REQUEST["qt"] : "search";
+		$with_thumbnail = isset($_REQUEST["wt"]) ? $_REQUEST["wt"] : false;
 		
 		$output = null;
 		$output = \ESWP\Client::search_docs($query, $on_type, $query_type);
+		
+		//Return thumbnails instead of straight output where requested
+		if ($with_thumbnail) {
+			$n_output = "<ul>";
+			foreach(\ESWP\Client::get_thumbnails($output, $query_type) as $thumbnail) {
+				$n_output = $n_output . $thumbnail;
+			}
+			$n_output = $n_output .  "</ul>";
+
+			$output = $n_output;
+		}
 	break;
 	//Execute a reindex
 	case "reindex":

@@ -34,8 +34,12 @@ class Comments extends BaseType {
 		));
 	}
 	
-	public function get_thumbnail($doc) {
-		?><h6>Comment on post <?php echo $doc["post_id"] ?></h6><?php
+	public function get_search_thumbnail($doc) {
+		return "";
+	}
+	
+	public function get_autocomplete_thumbnail($doc) {
+		return "";
 	}
 }
 ?>

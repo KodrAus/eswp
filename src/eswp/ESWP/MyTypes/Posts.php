@@ -93,17 +93,25 @@ class Posts extends BaseType {
 		));
 	}
 	
-	public function get_thumbnail($doc) {
-		?>
+	public function get_search_thumbnail($doc) {
+		if (!isset($doc["excerpt"])) {
+			$doc["excerpt"] = "";
+		}
+		
+		return '
 		<div class="search-result">
-			<h3><a href="<?php echo get_permalink($doc["id"]) ?>"><?php echo $doc["title"] ?></a></h3>
-			<p><em>by <?php echo $doc["author"] ?><?php $this->thumbnail_get_categories($doc) ?></em></p>
-			<?php if (isset($doc["excerpt"])) { echo $doc["excerpt"]; } ?>
+			<h3><a href="' . get_permalink($doc["id"]) .'">' . $doc["title"] . '</a></h3>
+			<p><em>by '.$doc["author"] .' ' . $this->thumbnail_get_categories($doc) .'</em></p>
+			' . $doc["excerpt"] . '
 		</div>
-		<?php
+		';
 	}
 	
-	public function thumbnail_get_categories($doc) {
+	public function get_autocomplete_thumbnail($doc) {
+		return '<h3><a href="' . get_permalink($doc["id"]) .'">' . $doc["title"] . '</a></h3>';
+	}
+	
+	function thumbnail_get_categories($doc) {
 		if (isset($doc["categories"])) {
 			echo " in ";
 			
