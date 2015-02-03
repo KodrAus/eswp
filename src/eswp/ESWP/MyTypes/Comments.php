@@ -16,11 +16,15 @@ class Comments extends BaseType {
 	}
 	
 	public function map($client, $index, $type) {
-		$type->setMapping(array(
+		$mapping = new \Elastica\Type\Mapping();
+		$mapping->setType($type);
+		$mapping->setProperties(array(
 			"modified" => array (
 				"type" => "date"
 			)
 		));
+		
+		$mapping->send();
 	}
 	
 	public function index($client, $index, $type, $id, $doc) {
