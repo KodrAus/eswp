@@ -15,7 +15,7 @@ class Comments extends BaseType {
 		return $doc === "comments";
 	}
 	
-	public function map($type) {
+	public function map($client, $index, $type) {
 		$type->setMapping(array(
 			"modified" => array (
 				"type" => "date"
@@ -23,7 +23,7 @@ class Comments extends BaseType {
 		));
 	}
 	
-	public function index($type, $id, $doc) {
+	public function index($client, $index, $type, $id, $doc) {
 		$type->addDocument(new \Elastica\Document($id, 
 			array(
 				"author" => $doc->comment_author,

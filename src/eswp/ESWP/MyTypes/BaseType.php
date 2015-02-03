@@ -42,9 +42,9 @@ abstract class BaseType {
 	abstract public function wp_document_is_this_type($doc);
 	abstract public function es_document_is_this_type($doc);
 	
-	abstract public function index($type, $id, $doc);
+	abstract public function index($client, $index, $type, $id, $doc);
 	
-	public function map($type) {
+	public function map($client, $index, $type) {
 		//By default let Elasticsearch handle mapping at index time
 	}
 	

@@ -16,8 +16,10 @@ class Posts extends BaseType {
 	}
 	
 	//The default Post mapping adds a modified datestamp, content length and autocomplete field
-	public function map($type) {
-		$type->setMapping(array(
+	public function map($client, $index, $type) {
+		$mapping = new \Elastica\Type\Mapping();
+		$mapping->setType($type);
+		$mapping->setProperties(array(
 			"modified" => array(
 				"type" => "date"
 			),
@@ -31,9 +33,11 @@ class Posts extends BaseType {
 				"analyzer" => "autocomplete_text"	
 			)
 		));
+		
+		$mapping->send();
 	}
 	
-	public function index($type, $id, $doc) {
+	public function index($client, $index, $type, $id, $doc) {
 		//Get the categories
 		$categories = get_the_terms($doc, "category");
 		$_categories = array();
